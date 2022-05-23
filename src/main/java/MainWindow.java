@@ -4,6 +4,7 @@ import org.slf4j.LoggerFactory;
 import world.Camera;
 import world.CameraConstants;
 import world.Line;
+import world.Polygon3D;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
@@ -28,7 +29,7 @@ public class MainWindow extends JFrame implements KeyListener, ActionListener {
     private final JMenuItem howToUse;
 
 
-    public MainWindow() {
+    public MainWindow(){
         super("Virtual camera");
         setSize(1280, 800);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -71,6 +72,13 @@ public class MainWindow extends JFrame implements KeyListener, ActionListener {
 
 //      == camera ==
         camera =new Camera();
+//        todo delete in the end
+        try {
+            camera.setObjects(DataReader.load("src/main/resources/test.json"));
+        } catch (IOException e) {
+           log.error(e.getMessage());
+           e.printStackTrace();
+        }
         this.add(camera);
 
         setVisible(true);
@@ -85,13 +93,12 @@ public class MainWindow extends JFrame implements KeyListener, ActionListener {
             JOptionPane.showMessageDialog(this ,"Instruction","How to use",JOptionPane.INFORMATION_MESSAGE);
 
         }else if(e.getSource() == loadData){
-            System.out.println("choosing file");
             JFileChooser fileChooser = new JFileChooser( FileSystemView.getFileSystemView().getHomeDirectory());
             int isSelected = fileChooser.showOpenDialog(this);
             if(isSelected == JFileChooser.APPROVE_OPTION){
                 try{
                     File file = fileChooser.getSelectedFile();
-                    List<Line> objects = DataReader.load(file.getPath());
+                    List<Polygon3D> objects = DataReader.load(file.getPath());
                     camera.setObjects(objects);
                     camera.repaint();
                 } catch (IOException ex) {

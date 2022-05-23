@@ -6,9 +6,10 @@ import org.json.JSONObject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import world.Line;
 import world.Point;
+import world.Polygon3D;
 
+import java.awt.*;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -19,24 +20,40 @@ import java.util.List;
 public class DataReader {
 
     private static final Logger log = LoggerFactory.getLogger(DataReader.class);
+    private static final List<Color> WALLS_COLORS = List.of(Color.BLUE, Color.RED, Color.WHITE, Color.green, Color.ORANGE, Color.MAGENTA);
 
     public static List load(String path) throws IOException {
-        List<Line> objects = new ArrayList<>();
-        JSONArray parser = new JSONArray(Files.readString(Path.of(path), StandardCharsets.UTF_8));
-        parser.forEach(lines -> {
-            JSONArray line = (JSONArray) lines;
-            for(var l :line) {
-                JSONObject points = (JSONObject) ((JSONObject) l).get("line") ;
-                Point p1 = new Point(points.getDouble("x1"), points.getDouble("y1"), points.getDouble("z1"));
-                Point p2 = new Point(points.getDouble("x2"), points.getDouble("y2"), points.getDouble("z2"));
-                objects.add(new Line(p1, p2));
+        List<Polygon3D> polygonsList = new ArrayList<>();
+
+        final String jsonText = Files.readString(Path.of(path), StandardCharsets.UTF_8);
+
+        JSONObject json = new JSONObject(jsonText);
+        JSONArray polygonsArray = json.getJSONArray("polygons");
+        int k=0;
+        for(var polygonItem : polygonsArray) {
+            JSONObject polygonObject = (JSONObject)polygonItem;
+
+            Polygon3D polygon3d = new Polygon3D();
+
+            JSONArray pointsArray = polygonObject.getJSONArray("points");
+
+            for(var pointsItem : pointsArray) {
+                log.debug(pointsItem.toString());
+
+                JSONArray pointsList = (JSONArray)pointsItem;
+
+//               x -> 0, y -> 1, z-> 2
+                polygon3d.addPoint(new Point(pointsList.getDouble(0),pointsList.getDouble(1),pointsList.getDouble(2)));
             }
-        });
-        System.out.println("Size "+objects.size());
-        return objects;
+
+            polygon3d.setColor(WALLS_COLORS.get(k));
+            k++;
+
+            polygonsList.add(polygon3d);
+        }
+        return polygonsList;
+    }
+
     }
 
 
-
-
-}
