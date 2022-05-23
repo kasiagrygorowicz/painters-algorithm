@@ -43,7 +43,7 @@ public class DataReader {
                 polygon3d.addPoint(new Point(pointsList.getDouble(0),pointsList.getDouble(1),pointsList.getDouble(2)));
             }
 
-            polygon3d.setColor(WALLS_COLORS.get(k));
+            polygon3d.setColor(WALLS_COLORS.get(k%6));
             k++;
 
             polygonsList.add(polygon3d);

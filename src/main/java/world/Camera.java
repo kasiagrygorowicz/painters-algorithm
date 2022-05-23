@@ -76,41 +76,52 @@ public class Camera extends JPanel {
 
     }
 
-    private java.awt.Point scalePoint(Point p){
+    private java.awt.Point scalePoint(Point p) {
         double x = p.getX() * D / (p.getZ());
         double y = p.getY() * D / (p.getZ());
 
         double xPositioned = getSize().width / 2.0;
         double yPositioned = getSize().height / 2.0;
 
-        return new java.awt.Point((int)Math.ceil(x + xPositioned), (int)Math.ceil(y + yPositioned));
+        return new java.awt.Point((int) Math.ceil(x + xPositioned), (int) Math.ceil(y + yPositioned));
     }
 
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        Polygon3D.sortPolygons(this.objects);
+        List<Polygon3D> pp = Polygon3D.dividePolygon(objects);
+        Polygon3D.sortPolygons(pp);
         Graphics2D g2D = (Graphics2D) g;
-        if (objects != null) {
-            for (Polygon3D poly : objects) {
-                int n =poly.getPoints().size();
+        if (pp != null) {
+            for (Polygon3D poly : pp) {
+                int n = poly.getPoints().size();
                 int[] points2d_x = new int[n];
-                int [] points2d_y =  new int[n];
-                int index =0;
-                for(Point p : poly.getPoints()) {
+                int[] points2d_y = new int[n];
+                int index = 0;
+                for (Point p : poly.getPoints()) {
                     java.awt.Point scaled = scalePoint(p);
-                    points2d_x[index]=scaled.x;
-                    points2d_y[index]=scaled.y;
+                    points2d_x[index] = scaled.x;
+                    points2d_y[index] = scaled.y;
                     index++;
                 }
 
                 Polygon polygon = new Polygon(
-                        points2d_x,points2d_y,n
+                        points2d_x, points2d_y, n
                 );
                 g2D.setPaint(poly.getColor());
                 g2D.drawPolygon(polygon);
                 g2D.fillPolygon(polygon);
+
+
+
+                for (int i = 0; i < 4; i++) {
+
+//                    g2D.setStroke(new BasicStroke(2));
+                    g2D.setColor(poly.getColor());
+                    g2D.drawLine(polygon.xpoints[i % 4], polygon.ypoints[i % 4], polygon.xpoints[(i + 1) % 4], polygon.ypoints[(i + 1) % 4]);
+                }
+
             }
         }
     }
