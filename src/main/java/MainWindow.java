@@ -74,7 +74,7 @@ public class MainWindow extends JFrame implements KeyListener, ActionListener {
         camera =new Camera();
 //        todo delete in the end
         try {
-            camera.setObjects(DataReader.load("src/main/resources/data1.json"));
+            camera.setObjects(DataReader.load("src/main/resources/test.json"));
         } catch (IOException e) {
            log.error(e.getMessage());
            e.printStackTrace();

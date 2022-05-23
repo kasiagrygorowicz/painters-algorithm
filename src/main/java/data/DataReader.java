@@ -38,10 +38,7 @@ public class DataReader {
             JSONArray pointsArray = polygonObject.getJSONArray("points");
 
             for(var pointsItem : pointsArray) {
-                log.debug(pointsItem.toString());
-
                 JSONArray pointsList = (JSONArray)pointsItem;
-
 //               x -> 0, y -> 1, z-> 2
                 polygon3d.addPoint(new Point(pointsList.getDouble(0),pointsList.getDouble(1),pointsList.getDouble(2)));
             }

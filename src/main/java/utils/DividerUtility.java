@@ -14,6 +14,7 @@ public class DividerUtility {
 
     public static List<Polygon3D> dividePolygon(List<Polygon3D> world) {
         List<Polygon3D> newWorld = new ArrayList<>();
+        log.info("Starting with {} polygons".format(String.valueOf(world.size())));
 
         for (var polygon : world) {
             if (polygon.getPoints().size() > 3) {
@@ -24,12 +25,13 @@ public class DividerUtility {
                         p.addPoint(polygon.getPoints().get(j));
                     p.setColor(polygon.getColor());
                 }
+                log.info(p.toString());
                 newWorld.add(p);
             } else {
                 newWorld.add(polygon);
             }
         }
-
+        log.info("Finishign with total number of divided polygons {}".format(String.valueOf(newWorld.size())));
         return newWorld;
     }
 }
