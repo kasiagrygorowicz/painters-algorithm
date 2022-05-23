@@ -2,9 +2,7 @@ package world;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import world.utils.ROTATION_TYPE;
-import world.utils.TransformationUtility;
-
+import utils.*;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
@@ -79,7 +77,8 @@ public class Camera extends JPanel {
 
 //        todo divide -> transform-> sort
 
-        List<Polygon3D> objects = transform();
+        List<Polygon3D> objects =  DividerUtility.dividePolygon(transform());
+        objects = SortingUtility.sort(objects);
 
         for (var polygon : objects) {
             Polygon p = new Polygon();
