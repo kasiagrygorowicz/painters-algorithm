@@ -18,7 +18,7 @@ public class Camera extends JPanel {
     private static final Logger log = LoggerFactory.getLogger(Camera.class);
 
     //  == camera parameters ==
-    private double D = 150;
+    private double D = 300;
 
     private List<Polygon3D> objects = null;
 
