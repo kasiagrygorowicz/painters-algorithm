@@ -1,5 +1,5 @@
 package utils;
 
-public enum ROTATION_TYPE {
+public enum RotationType {
     X, Y, Z
 }

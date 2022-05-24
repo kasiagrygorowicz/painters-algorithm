@@ -3,7 +3,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import world.Camera;
 import world.CameraConstants;
-import world.Line;
 import world.Polygon3D;
 
 import javax.swing.*;
@@ -29,7 +28,7 @@ public class MainWindow extends JFrame implements KeyListener, ActionListener {
     private final JMenuItem howToUse;
 
 
-    public MainWindow(){
+    public MainWindow() {
         super("Virtual camera");
         setSize(1280, 800);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -66,19 +65,19 @@ public class MainWindow extends JFrame implements KeyListener, ActionListener {
         help.add(about);
 
 //      howToUse
-        howToUse =new JMenuItem("How to use");
+        howToUse = new JMenuItem("How to use");
         howToUse.addActionListener(this);
         help.add(howToUse);
 
 //      == camera ==
-        camera =new Camera();
+        camera = new Camera();
 //        todo delete in the end
         try {
-            camera.setObjects(DataReader.load("src/main/resources/data1.json"));
+            camera.setPolygons(DataReader.load("src/main/resources/data1.json"));
             camera.repaint();
         } catch (IOException e) {
-           log.error(e.getMessage());
-           e.printStackTrace();
+            log.error(e.getMessage());
+            e.printStackTrace();
         }
         this.add(camera);
 
@@ -88,19 +87,19 @@ public class MainWindow extends JFrame implements KeyListener, ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getSource() == about){
-            JOptionPane.showMessageDialog(this,"Virtual camera project","About",JOptionPane.INFORMATION_MESSAGE);
-        }else if(e.getSource() == howToUse){
-            JOptionPane.showMessageDialog(this ,"Instruction","How to use",JOptionPane.INFORMATION_MESSAGE);
+        if (e.getSource() == about) {
+            JOptionPane.showMessageDialog(this, "Virtual camera project", "About", JOptionPane.INFORMATION_MESSAGE);
+        } else if (e.getSource() == howToUse) {
+            JOptionPane.showMessageDialog(this, "Instruction", "How to use", JOptionPane.INFORMATION_MESSAGE);
 
-        }else if(e.getSource() == loadData){
-            JFileChooser fileChooser = new JFileChooser( FileSystemView.getFileSystemView().getHomeDirectory());
+        } else if (e.getSource() == loadData) {
+            JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
             int isSelected = fileChooser.showOpenDialog(this);
-            if(isSelected == JFileChooser.APPROVE_OPTION){
-                try{
+            if (isSelected == JFileChooser.APPROVE_OPTION) {
+                try {
                     File file = fileChooser.getSelectedFile();
                     List<Polygon3D> objects = DataReader.load(file.getPath());
-                    camera.setObjects(objects);
+                    camera.setPolygons(objects);
                     camera.repaint();
                 } catch (IOException ex) {
                     JOptionPane.showMessageDialog(
@@ -122,38 +121,38 @@ public class MainWindow extends JFrame implements KeyListener, ActionListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-       switch(e.getKeyCode()){
+        switch (e.getKeyCode()) {
 //         move vertically and horizontally
 //        == move up ==
-           case KeyEvent.VK_UP -> camera.moveAxisY(-CameraConstants.STEP);
+            case KeyEvent.VK_UP -> camera.moveAxisY(-CameraConstants.STEP);
 //         == move down ==
-           case KeyEvent.VK_DOWN -> camera.moveAxisY(CameraConstants.STEP);
+            case KeyEvent.VK_DOWN -> camera.moveAxisY(CameraConstants.STEP);
 //         == move right ==
-           case KeyEvent.VK_RIGHT -> camera.moveAxisX(CameraConstants.STEP);
+            case KeyEvent.VK_RIGHT -> camera.moveAxisX(CameraConstants.STEP);
 //         == move left ==
-           case KeyEvent.VK_LEFT -> camera.moveAxisX(-CameraConstants.STEP);
+            case KeyEvent.VK_LEFT -> camera.moveAxisX(-CameraConstants.STEP);
 //         == move forwards ==
-           case KeyEvent.VK_Q -> camera.moveAxisZ(-CameraConstants.STEP);
+            case KeyEvent.VK_Q -> camera.moveAxisZ(-CameraConstants.STEP);
 //         == move backwards
-           case KeyEvent.VK_W -> camera.moveAxisZ(CameraConstants.STEP);
+            case KeyEvent.VK_W -> camera.moveAxisZ(CameraConstants.STEP);
 //         == zoom in ==
-           case KeyEvent.VK_I -> camera.setZoom(CameraConstants.ZOOM);
+            case KeyEvent.VK_I -> camera.setZoom(CameraConstants.ZOOM);
 //         == zoom out ==
-           case KeyEvent.VK_O -> camera.setZoom(-CameraConstants.ZOOM);
+            case KeyEvent.VK_O -> camera.setZoom(-CameraConstants.ZOOM);
 //         == x rotation - forward ==
-           case KeyEvent.VK_F -> camera.rotateAxisX(-CameraConstants.TURN);
+            case KeyEvent.VK_F -> camera.rotateAxisX(-CameraConstants.TURN);
 //         == x rotation - backwards ==
-           case KeyEvent.VK_G -> camera.rotateAxisX(CameraConstants.TURN);
+            case KeyEvent.VK_G -> camera.rotateAxisX(CameraConstants.TURN);
 //         == y rotation - right ==
-           case KeyEvent.VK_H-> camera.rotateAxisY(CameraConstants.TURN);
+            case KeyEvent.VK_H -> camera.rotateAxisY(CameraConstants.TURN);
 //         == y rotation - left ==
-           case KeyEvent.VK_J -> camera.rotateAxisY(-CameraConstants.TURN);
+            case KeyEvent.VK_J -> camera.rotateAxisY(-CameraConstants.TURN);
 //         == z rotation- down&left ==
-           case KeyEvent.VK_K -> camera.rotateAxisZ(-CameraConstants.TURN);
+            case KeyEvent.VK_K -> camera.rotateAxisZ(-CameraConstants.TURN);
 //         == z rotation- down&right ==
-           case KeyEvent.VK_L -> camera.rotateAxisZ(CameraConstants.TURN);
-    }
-       camera.repaint();
+            case KeyEvent.VK_L -> camera.rotateAxisZ(CameraConstants.TURN);
+        }
+        camera.repaint();
     }
 
     @Override

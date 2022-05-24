@@ -7,7 +7,7 @@ import lombok.*;
 @Setter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString
-public class Point {
+public class Point3D {
 
     //  == coordinates ==
     @EqualsAndHashCode.Include
@@ -16,6 +16,12 @@ public class Point {
     private double y;
     @EqualsAndHashCode.Include
     private double z;
+
+    public Point3D(Point3D point3D) {
+        this.x = point3D.getX();
+        this.y = point3D.getY();
+        this.z = point3D.getZ();
+    }
 
     public double[] getCoordinates() {
         return new double[]{x, y, z};
@@ -27,4 +33,9 @@ public class Point {
         this.z = z;
     }
 
+    public void multiplyCoordinates(double t) {
+        this.x *= t;
+        this.y *= t;
+        this.z *= t;
+    }
 }

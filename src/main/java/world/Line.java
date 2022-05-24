@@ -1,6 +1,9 @@
 package world;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 
 @AllArgsConstructor
@@ -9,12 +12,14 @@ import org.jetbrains.annotations.NotNull;
 @ToString
 public class Line {
 
-    @EqualsAndHashCode.Include @NotNull
-    private Point p1;
-    @EqualsAndHashCode.Include @NotNull
-    private Point p2;
+    @EqualsAndHashCode.Include
+    @NotNull
+    private Point3D p1;
+    @EqualsAndHashCode.Include
+    @NotNull
+    private Point3D p2;
 
-    public Point[] getLine() {
-        return new Point[] {p1, p2};
+    public Point3D[] getLine() {
+        return new Point3D[]{p1, p2};
     }
 }

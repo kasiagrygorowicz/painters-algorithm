@@ -2,14 +2,11 @@ package world;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import utils.*;
+import utils.RotationType;
+import utils.GeometricUtility;
 
 import javax.swing.*;
 import java.awt.*;
-
-import utils.ROTATION_TYPE;
-
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -17,36 +14,34 @@ public class Camera extends JPanel {
 
     private static final Logger log = LoggerFactory.getLogger(Camera.class);
 
-    //  == camera parameters ==
     private double D = 300;
-
-    private List<Polygon3D> objects = null;
+    private List<Polygon3D> polygons;
 
     public Camera() {
         this.setBackground(Color.BLACK);
     }
 
-    public void setObjects(List<Polygon3D> objects) {
-        this.objects = objects;
+    public void setPolygons(List<Polygon3D> polygons) {
+        this.polygons = polygons;
     }
 
     //  == move camera ==
 
     public void moveAxisX(double v) {
-        for (Polygon3D poly : objects)
-            for (Point p : poly.getPoints())
+        for (Polygon3D poly : polygons)
+            for (Point3D p : poly.getPoints())
                 p.setX(p.getX() + v);
     }
 
     public void moveAxisY(double v) {
-        for (Polygon3D poly : objects)
-            for (Point p : poly.getPoints())
+        for (Polygon3D poly : polygons)
+            for (Point3D p : poly.getPoints())
                 p.setY(p.getY() + v);
     }
 
     public void moveAxisZ(double v) {
-        for (Polygon3D poly : objects)
-            for (Point p : poly.getPoints())
+        for (Polygon3D poly : polygons)
+            for (Point3D p : poly.getPoints())
                 p.setZ(p.getZ() + v);
     }
 
@@ -55,74 +50,61 @@ public class Camera extends JPanel {
         D += v;
     }
 
-
     //  == rotate camera ==
     public void rotateAxisX(double v) {
-        for (Polygon3D poly : objects)
-            for (Point p : poly.getPoints())
-                TransformationUtility.rotate(p, ROTATION_TYPE.X, v);
+        for (Polygon3D poly : polygons)
+            for (Point3D p : poly.getPoints())
+                GeometricUtility.rotate(p, RotationType.X, v);
     }
 
     public void rotateAxisY(double v) {
-        for (Polygon3D poly : objects)
-            for (Point p : poly.getPoints())
-                TransformationUtility.rotate(p, ROTATION_TYPE.Y, v);
+        for (Polygon3D poly : polygons)
+            for (Point3D p : poly.getPoints())
+                GeometricUtility.rotate(p, RotationType.Y, v);
     }
 
     public void rotateAxisZ(double v) {
-        for (Polygon3D poly : objects)
-            for (Point p : poly.getPoints())
-                TransformationUtility.rotate(p, ROTATION_TYPE.Z, v);
-
+        for (Polygon3D poly : polygons)
+            for (Point3D p : poly.getPoints())
+                GeometricUtility.rotate(p, RotationType.Z, v);
     }
-
-    private java.awt.Point scalePoint(Point p) {
-        double x = p.getX() * D / (p.getZ());
-        double y = p.getY() * D / (p.getZ());
-
-        double xPositioned = getSize().width / 2.0;
-        double yPositioned = getSize().height / 2.0;
-
-        return new java.awt.Point((int) Math.ceil(x + xPositioned), (int) Math.ceil(y + yPositioned));
-    }
-
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        List<Polygon3D> pp = Polygon3D.dividePolygon(objects);
-        Polygon3D.sortPolygons(pp);
         Graphics2D g2D = (Graphics2D) g;
-        if (pp != null) {
-            for (Polygon3D poly : pp) {
-                int n = poly.getPoints().size();
-                int[] points2d_x = new int[n];
-                int[] points2d_y = new int[n];
-                int index = 0;
-                for (Point p : poly.getPoints()) {
-                    java.awt.Point scaled = scalePoint(p);
-                    points2d_x[index] = scaled.x;
-                    points2d_y[index] = scaled.y;
-                    index++;
-                }
 
-                Polygon polygon = new Polygon(
-                        points2d_x, points2d_y, n
-                );
-                g2D.setPaint(poly.getColor());
-                g2D.drawPolygon(polygon);
-                g2D.fillPolygon(polygon);
+        List<Polygon3D> pp = Polygon3D.dividePolygon(polygons);
+        Polygon3D.sortPolygons(pp);
 
-
-
-                for (int i = 0; i < 4; i++) {
-
-//                    g2D.setStroke(new BasicStroke(2));
-                    g2D.setColor(poly.getColor());
-                    g2D.drawLine(polygon.xpoints[i % 4], polygon.ypoints[i % 4], polygon.xpoints[(i + 1) % 4], polygon.ypoints[(i + 1) % 4]);
-                }
-
+        for (Polygon3D polygon3D : pp) {
+            int n = polygon3D.getPoints().size();
+            int[] points2D_x = new int[n];
+            int[] points2D_y = new int[n];
+            int index = 0;
+            for (Point3D p : polygon3D.getPoints()) {
+                java.awt.Point scaledPoint = GeometricUtility.scalePoint(p, D, getHeight(), getWidth());
+                points2D_x[index] = scaledPoint.x;
+                points2D_y[index] = scaledPoint.y;
+                index++;
             }
+            Polygon polygon2D = new Polygon(points2D_x, points2D_y, n);
+            drawPolygon(g2D, polygon3D, polygon2D);
+            drawLines(g2D, polygon3D, polygon2D);
+        }
+
+    }
+
+    private void drawPolygon(Graphics2D g2D, Polygon3D polygon3D, Polygon polygon2D) {
+        g2D.setPaint(polygon3D.getColor());
+        g2D.drawPolygon(polygon2D);
+        g2D.fillPolygon(polygon2D);
+    }
+
+    private void drawLines(Graphics2D g2D, Polygon3D polygon3D, Polygon polygon2D) {
+        for (int i = 0; i < 4; i++) {
+            g2D.setColor(polygon3D.getColor());
+            g2D.drawLine(polygon2D.xpoints[i % 4], polygon2D.ypoints[i % 4], polygon2D.xpoints[(i + 1) % 4], polygon2D.ypoints[(i + 1) % 4]);
         }
     }
 }
