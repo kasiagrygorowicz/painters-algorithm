@@ -27,6 +27,8 @@ public class MainWindow extends JFrame implements KeyListener, ActionListener {
     private final JMenuItem about;
     private final JMenuItem howToUse;
 
+    private boolean divideOn;
+
 
     public MainWindow() {
         super("Virtual camera");
@@ -82,7 +84,7 @@ public class MainWindow extends JFrame implements KeyListener, ActionListener {
         this.add(camera);
 
         setVisible(true);
-
+        this.divideOn = true;
     }
 
     @Override
@@ -151,6 +153,10 @@ public class MainWindow extends JFrame implements KeyListener, ActionListener {
             case KeyEvent.VK_K -> camera.rotateAxisZ(-CameraConstants.TURN);
 //         == z rotation- down&right ==
             case KeyEvent.VK_L -> camera.rotateAxisZ(CameraConstants.TURN);
+            case KeyEvent.VK_Z -> {
+                this.divideOn = !divideOn;
+                camera.setDivideOn(divideOn);
+            }
         }
         camera.repaint();
     }

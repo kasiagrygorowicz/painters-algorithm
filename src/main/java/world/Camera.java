@@ -7,6 +7,7 @@ import utils.GeometricUtility;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -17,8 +18,11 @@ public class Camera extends JPanel {
     private double D = 300;
     private List<Polygon3D> polygons;
 
+    private boolean divideOn;
+
     public Camera() {
         this.setBackground(Color.BLACK);
+        this.divideOn = true;
     }
 
     public void setPolygons(List<Polygon3D> polygons) {
@@ -74,9 +78,13 @@ public class Camera extends JPanel {
         super.paintComponent(g);
         Graphics2D g2D = (Graphics2D) g;
 
-        List<Polygon3D> pp = Polygon3D.dividePolygon(polygons);
+        List<Polygon3D> pp;
+        if (divideOn) {
+            pp = Polygon3D.dividePolygon(polygons);
+        } else {
+            pp = new ArrayList<>(polygons);
+        }
         Polygon3D.sortPolygons(pp);
-
         for (Polygon3D polygon3D : pp) {
             int n = polygon3D.getPoints().size();
             int[] points2D_x = new int[n];
@@ -106,6 +114,10 @@ public class Camera extends JPanel {
             g2D.setColor(polygon3D.getColor());
             g2D.drawLine(polygon2D.xpoints[i % 4], polygon2D.ypoints[i % 4], polygon2D.xpoints[(i + 1) % 4], polygon2D.ypoints[(i + 1) % 4]);
         }
+    }
+
+    public void setDivideOn(boolean divideOn) {
+        this.divideOn = divideOn;
     }
 }
 

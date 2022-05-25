@@ -43,7 +43,6 @@ public class Polygon3D {
         List<Point3D> createdPoints = new ArrayList<>();
 
         for (Polygon3D polygon : polygons) {
-            System.out.println(polygon.color);
 
 //            Point3D lineAStartPoint = polygon.getPoints().get(0);
 //            Point3D lineAEndPoint = polygon.getPoints().get(1);
